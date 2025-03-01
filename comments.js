@@ -1,34 +1,47 @@
 //create web server
-const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const Comment = require('./models/comment');
-
-const app = express();
-
-//connect to database
-mongoose.connect('mongodb://localhost/commentbox');
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/api/comments', (req, res) => {
-  Comment.find((err, comments) => {
-    if (err) return res.status(500).json({ message: err.message });
-    res.json(comments);
-  });
-});
-
-app.post('/api/comments', (req, res) => {
-  Comment.create(req.body, (err, comment) => {
-    if (err) return res.status(500).json({ message: err.message });
-    res.json(comment);
-  });
-});
-
-app.listen(3001, () => {
-  console.log('Server listening on', 3001);
-});
+var express = require('express');
+var app = express();
+//create server
+var http = require('http').Server(app);
+//create socket
+var io = require('socket.io')(http);
+//create fs
+var fs = require('fs');
+//create path
+var path = require('path');
+//create body-parser
+var bodyParser = require('body-parser');
+//create cookie-parser
+var cookieParser = require('cookie-parser');
+//create session
+var session = require('express-session');
+//create morgan
+var morgan = require('morgan');
+//create method-override
+var methodOverride = require('method-override');
+//create errorhandler
+var errorHandler = require('errorhandler');
+//create multer
+var multer = require('multer');
+//create mongoose
+var mongoose = require('mongoose');
+//create Schema
+var Schema = mongoose.Schema;
+//create assert
+var assert = require('assert');
+//create passport
+var passport = require('passport');
+//create LocalStrategy
+var LocalStrategy = require('passport-local').Strategy;
+//create flash
+var flash = require('connect-flash');
+//create crypto
+var crypto = require('crypto');
+//create nodemailer
+var nodemailer = require('nodemailer');
+//create smtpTransport
+var smtpTransport = require('nodemailer-smtp-transport');
+//create moment
+var moment = require('moment');
+//create async
+var async = require('async
