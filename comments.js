@@ -44,4 +44,42 @@ var smtpTransport = require('nodemailer-smtp-transport');
 //create moment
 var moment = require('moment');
 //create async
-var async = require('async
+var async = require('async');
+//create crypto
+var crypto = require('crypto');
+//create bcrypt
+var bcrypt = require('bcrypt-nodejs');
+//create users
+var users = require('./users');
+//create comments
+var comments = require('./comments');
+//create config
+var config = require('./config');
+//create user
+var User = require('./models/user');
+//create comment
+var Comment = require('./models/comment');
+//create user
+var user = new User();
+//create comment
+var comment = new Comment();
+//create port
+var port = process.env.PORT || 3000;
+//create db
+var db = mongoose.connection;
+//create db
+var db = mongoose.connection;
+//create db
+var db = mongoose.connection;
+//connect to db
+mongoose.connect('mongodb://localhost:27017/comments');
+//create Schema
+var Schema = mongoose.Schema;
+//create new Schema
+var commentSchema = new Schema({
+    user: String,
+    content: String,
+    created: Date
+});
+//create model
+var Comment = mongoose.model('Comment', commentSchema);
