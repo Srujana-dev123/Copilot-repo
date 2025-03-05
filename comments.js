@@ -1,30 +1,39 @@
-//create web server
-var http = require('http');
-var fs = require('fs');
-var path = require('path');
-var url = require('url');
-var comments = [];
-http.createServer(function(req, res){
-	var urlObj = url.parse(req.url,true);
-	var pathname = urlObj.pathname;
-	if(pathname == '/'){
-		var filepath = path.join(__dirname,'index.html');
-		var fileContent = fs.readFileSync(filepath);
-		res.writeHead(200,{'Content-Type':'text/html'});
-		res.end(fileContent);
-	}else if(pathname == '/comment'){
-		var comment = urlObj.query;
-		comments.push(comment);
-		res.end(JSON.stringify(comments));
-	}else{
-		var filepath = path.join(__dirname,pathname);
-		if(fs.existsSync(filepath)){
-			var fileContent = fs.readFileSync(filepath);
-			res.end(fileContent);
-		}else{
-			res.writeHead(404,{'Content-Type':'text/html'});
-			res.end('404 not found');
-		}
-	}
-}).listen(8080);
-console.log('server is listening 8080');
+// Create web server
+// Use express and body-parser to create a web server
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const comments = require('./comments.json');
+const fs = require('fs');
+
+app.use(bodyParser.json());
+
+// GET /comments
+// Respond with the JSON of all comments
+app.get('/comments', (req, res) => {
+    res.json(comments);
+});
+
+// POST /comments
+// Create a new comment
+app.post('/comments', (req, res) => {
+    // Get the comment from the request
+    const newComment = req.body;
+    // Add the comment to the comments array
+    comments.push(newComment);
+    // Write the comments to the file
+    fs.writeFile('./comments.json', JSON.stringify(comments), (err) => {
+        if (err) {
+            res.status(500).send('Error writing to file');
+        } else {
+            // Respond with the new comment
+            res.json(newComment);
+        }
+    });
+});
+
+// Start the server
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+});
+// End of comments.js
