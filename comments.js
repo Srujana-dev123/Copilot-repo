@@ -1,30 +1,30 @@
 //create web server
-var express = require('express');
-var app = express();
-
-//create a comments object
-var comments = {
-  "1": "This is the first comment",
-  "2": "This is the second comment",
-  "3": "This is the third comment"
-};
-
-//create a route to get all comments
-app.get('/comments', function(req, res) {
-  res.send(comments);
-});
-
-//create a route to get a comment by id
-app.get('/comments/:id', function(req, res) {
-  var comment = comments[req.params.id];
-  if (comment) {
-    res.send(comment);
-  } else {
-    res.status(404).send("Comment not found");
-  }
-});
-
-//start the server
-var server = app.listen(3000, function() {
-  console.log('Server listening on port 3000');
-});
+var http = require('http');
+var fs = require('fs');
+var path = require('path');
+var url = require('url');
+var comments = [];
+http.createServer(function(req, res){
+	var urlObj = url.parse(req.url,true);
+	var pathname = urlObj.pathname;
+	if(pathname == '/'){
+		var filepath = path.join(__dirname,'index.html');
+		var fileContent = fs.readFileSync(filepath);
+		res.writeHead(200,{'Content-Type':'text/html'});
+		res.end(fileContent);
+	}else if(pathname == '/comment'){
+		var comment = urlObj.query;
+		comments.push(comment);
+		res.end(JSON.stringify(comments));
+	}else{
+		var filepath = path.join(__dirname,pathname);
+		if(fs.existsSync(filepath)){
+			var fileContent = fs.readFileSync(filepath);
+			res.end(fileContent);
+		}else{
+			res.writeHead(404,{'Content-Type':'text/html'});
+			res.end('404 not found');
+		}
+	}
+}).listen(8080);
+console.log('server is listening 8080');
